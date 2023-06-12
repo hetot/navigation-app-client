@@ -10,7 +10,6 @@ const PageGenerator = (props) => {
             newPath = '/'
         }
         props.setPath(newPath)
-
     }
 
     if (props.response === null) {
@@ -20,13 +19,7 @@ const PageGenerator = (props) => {
             </div>
         )
     }
-    if (!props.response.successful) {
-        return (
-            <div>
-                Server Error!!!
-            </div>
-        )
-    } else if (props.response.folder) {
+    if (props.response.contents) {
         return (
             <div>
                 <h1>
@@ -36,10 +29,30 @@ const PageGenerator = (props) => {
                     </MyButton>
                 </h1>
                 {
-                    props.response.files.map((file, index) =>
-                        <PathItem file={file} key={index} currentPath={props.currentPath} setPath={props.setPath}/>
+                    props.response.contents.map((file, index) =>
+                        <PathItem file={file} key={index} currentPath={props.currentPath} setPath={props.setPath}
+                                  update={props.update} setAuth={props.setAuth}/>
                     )
                 }
+            </div>
+        )
+    } else if (props.response.lines) {
+        return (
+            <div>
+                <MyButton onClick={goBack} disabled={props.currentPath === '/'}>
+                    {"<-"}
+                </MyButton>
+                <br/>
+                <div>
+                    {
+                        props.response.lines.map((line, index) => {
+                                return (
+                                    <p key={index}>{line}</p>
+                                )
+                            }
+                        )
+                    }
+                </div>
             </div>
         )
     } else {
@@ -48,9 +61,7 @@ const PageGenerator = (props) => {
                 <MyButton onClick={goBack} disabled={props.currentPath === '/'}>
                     {"<-"}
                 </MyButton>
-                <br/>
-                <div dangerouslySetInnerHTML={{__html: props.response.content.replaceAll('\n', '<br>')}}>
-                </div>
+                <h1>Cannot do operations with current path</h1>
             </div>
         )
     }
